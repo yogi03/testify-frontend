@@ -298,14 +298,14 @@ export function UploadPage() {
             </div>
 
             {uploadedDoc && (
-                <div className="premium-panel rounded-[2rem] p-8 space-y-6">
+                <div className="premium-panel rounded-[2rem] p-4 md:p-8 space-y-6">
                     <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <div>
                             <p className="text-sm uppercase tracking-wider text-muted-foreground">Analyzed Content</p>
-                            <h2 className="text-2xl font-bold">{uploadedDoc.title}</h2>
-                            <p className="text-muted-foreground">Select one or more topics. The AI will distribute each test's questions across your selected topics based on the estimated topic length.</p>
+                            <h2 className="text-xl md:text-2xl font-bold">{uploadedDoc.title}</h2>
+                            <p className="text-sm text-muted-foreground mt-1">Select topics to include in your practice test.</p>
                         </div>
-                        <div className="rounded-2xl border border-primary/20 bg-white/70 px-4 py-3 text-sm text-primary font-medium">
+                        <div className="rounded-2xl border border-primary/20 bg-white/70 px-4 py-2 text-sm text-primary font-bold self-start md:self-center">
                             {selectedTopics.length} topic{selectedTopics.length === 1 ? "" : "s"} selected
                         </div>
                     </div>
@@ -319,61 +319,68 @@ export function UploadPage() {
                                         key={topic.id}
                                         type="button"
                                         onClick={() => toggleTopic(topic.id)}
-                                        className={`text-left p-5 rounded-2xl border transition-all ${isSelected ? "border-primary bg-white/80 shadow-sm" : "border-slate-200/80 bg-white/45 hover:border-primary/40 hover:bg-white/70"}`}
+                                        className={`text-left p-4 md:p-5 rounded-2xl border transition-all flex flex-col gap-3 ${isSelected ? "border-primary bg-white/80 shadow-sm" : "border-slate-200/80 bg-white/45 hover:border-primary/40 hover:bg-white/70"}`}
                                     >
                                         <div className="flex items-start justify-between gap-4">
-                                            <div>
-                                                <div className="flex items-center gap-2">
-                                                    <CheckCircle2 className={`w-5 h-5 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
-                                                    <h3 className="font-bold text-lg">{topic.name}</h3>
+                                            <div className="flex items-start gap-3">
+                                                <div className="mt-1">
+                                                    <CheckCircle2 className={`w-5 h-5 ${isSelected ? "text-primary" : "text-slate-300"}`} />
                                                 </div>
-                                                {topic.summary && (
-                                                    <p className="mt-2 text-sm text-muted-foreground">{topic.summary}</p>
-                                                )}
+                                                <h3 className="font-bold text-base md:text-lg leading-tight">{topic.name}</h3>
                                             </div>
-                                            <div className="shrink-0 rounded-full bg-white/85 border border-slate-200 px-3 py-1 text-xs font-bold text-primary">
-                                                ~{topic.recommended_questions} Q target
+                                            <div className="shrink-0 rounded-lg bg-primary/5 border border-primary/10 px-2 py-1 text-[10px] md:text-xs font-black text-primary uppercase">
+                                                {topic.recommended_questions} Questions
                                             </div>
                                         </div>
 
-                                        {topic.subtopics?.length > 0 && (
-                                            <div className="mt-4 flex flex-wrap gap-2">
-                                                {topic.subtopics.map((subtopic, index) => (
-                                                    <span key={`${topic.id}-${index}`} className="rounded-full border border-white/60 bg-white/65 px-3 py-1 text-xs font-medium text-slate-700">
-                                                        {subtopic}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        )}
+                                        <div className="pl-8 space-y-3">
+                                            {topic.summary && (
+                                                <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 md:line-clamp-none">
+                                                    {topic.summary}
+                                                </p>
+                                            )}
+                                            
+                                            {topic.subtopics?.length > 0 && (
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {topic.subtopics.map((subtopic, index) => (
+                                                        <span key={`${topic.id}-${index}`} className="rounded-md border border-slate-200/60 bg-white/60 px-2 py-0.5 text-[10px] font-medium text-slate-600">
+                                                            {subtopic}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
                                     </button>
                                 );
                             })}
                         </div>
                     ) : (
-                            <div className="rounded-2xl border border-dashed border-slate-300/70 bg-white/45 p-6 text-sm text-muted-foreground">
+                             <div className="rounded-2xl border border-dashed border-slate-300/70 bg-white/45 p-6 text-sm text-muted-foreground">
                             No structured topic outline was extracted for this content. You can still generate a general test, but topic-based progress tracking will be limited.
                         </div>
                     )}
 
-                    <div className="flex flex-col sm:flex-row gap-4">
-                        <button
-                            onClick={() => setSelectedTopics(uploadedDoc.topic_outline.map(topic => topic.id))}
-                            className="px-4 py-3 rounded-xl border border-slate-200 bg-white/75 font-medium hover:bg-white transition-colors"
-                        >
-                            Select All Topics
-                        </button>
-                        <button
-                            onClick={() => setSelectedTopics([])}
-                            className="px-4 py-3 rounded-xl border border-slate-200 bg-white/75 font-medium hover:bg-white transition-colors"
-                        >
-                            Clear Selection
-                        </button>
+                    <div className="flex flex-col gap-3 md:flex-row pt-4">
+                        <div className="flex flex-row gap-2 md:contents">
+                            <button
+                                onClick={() => setSelectedTopics(uploadedDoc.topic_outline.map(topic => topic.id))}
+                                className="flex-1 md:flex-none px-4 py-3 rounded-xl border border-slate-200 bg-white/75 text-sm font-bold hover:bg-white transition-colors"
+                            >
+                                Select All
+                            </button>
+                            <button
+                                onClick={() => setSelectedTopics([])}
+                                className="flex-1 md:flex-none px-4 py-3 rounded-xl border border-slate-200 bg-white/75 text-sm font-bold hover:bg-white transition-colors"
+                            >
+                                Clear
+                            </button>
+                        </div>
                         <button
                             onClick={handleGenerateTest}
                             disabled={loadingAction !== null || (uploadedDoc.topic_outline.length > 0 && selectedTopics.length === 0)}
-                            className="flex-1 py-4 rounded-xl bg-primary text-primary-foreground font-bold hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
+                            className="flex-[2] py-4 rounded-xl bg-primary text-primary-foreground font-black hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
                         >
-                            {loadingAction === "test" ? <><Loader2 className="w-5 h-5 animate-spin" /> Generating Test...</> : <><Target className="w-5 h-5" /> Generate Test for Selected Topics</>}
+                            {loadingAction === "test" ? <><Loader2 className="w-5 h-5 animate-spin" /> Generating...</> : <><Target className="w-5 h-5" /> Generate Test for Selected Topics</>}
                         </button>
                     </div>
                 </div>

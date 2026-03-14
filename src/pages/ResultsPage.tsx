@@ -190,38 +190,38 @@ export function ResultsPage() {
 
     return (
         <div className="max-w-4xl mx-auto space-y-8 fade-in">
-            <div className="premium-panel p-12 rounded-3xl text-center relative overflow-hidden">
+            <div className="premium-panel p-6 md:p-12 rounded-3xl text-center relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-chart-1 via-chart-2 to-chart-4" />
-                <Award className="w-20 h-20 text-yellow-500 mx-auto mb-6 drop-shadow-lg" />
-                <h1 className="text-5xl font-black mb-4">You scored {totalScore}</h1>
-                <p className="text-xl text-muted-foreground max-w-lg mx-auto">
+                <Award className="w-12 h-12 md:w-20 md:h-20 text-yellow-500 mx-auto mb-4 md:mb-6 drop-shadow-lg" />
+                <h1 className="text-3xl md:text-5xl font-black mb-4">You scored {totalScore}</h1>
+                <p className="text-lg md:text-xl text-muted-foreground max-w-lg mx-auto">
                     Testify evaluated your answers and instantly graded them.
                 </p>
-                <div className="mt-8 flex justify-center gap-4 flex-wrap">
-                    <button onClick={() => setShowReattempt(!showReattempt)} disabled={isGeneratingMap} className="px-6 py-3 rounded-full bg-primary text-primary-foreground font-bold hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-50">
+                <div className="mt-8 flex justify-center gap-3 md:gap-4 flex-wrap">
+                    <button onClick={() => setShowReattempt(!showReattempt)} disabled={isGeneratingMap} className="px-5 py-2.5 md:px-6 md:py-3 rounded-full bg-primary text-primary-foreground text-sm md:text-base font-bold hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-50">
                         <RefreshCw className="w-4 h-4" /> Reattempt Test
                     </button>
                     {test?.doc_id && (
                         <button
                             onClick={handleGenerateMindMap}
                             disabled={isGeneratingMap}
-                            className="px-6 py-3 rounded-full bg-[rgba(238,242,255,0.75)] text-indigo-600 border border-indigo-200/80 font-bold hover:bg-[rgba(238,242,255,0.92)] transition-all flex items-center gap-2 disabled:opacity-50"
+                            className="px-5 py-2.5 md:px-6 md:py-3 rounded-full bg-[rgba(238,242,255,0.75)] text-indigo-600 border border-indigo-200/80 text-sm md:text-base font-bold hover:bg-[rgba(238,242,255,0.92)] transition-all flex items-center gap-2 disabled:opacity-50"
                         >
                             {isGeneratingMap ? <Loader2 className="w-4 h-4 animate-spin" /> : <Network className="w-4 h-4" />}
                             {isGeneratingMap ? "Generating Map..." : "Generate Mind Map"}
                         </button>
                     )}
-                    <Link to="/dashboard" className="px-6 py-3 rounded-full border border-white/60 bg-white/65 font-bold hover:bg-white/80 transition-all">
+                    <Link to="/dashboard" className="px-5 py-2.5 md:px-6 md:py-3 rounded-full border border-white/60 bg-white/65 text-sm md:text-base font-bold hover:bg-white/80 transition-all">
                         Return to Dashboard
                     </Link>
                 </div>
 
                 {showReattempt && (
-                    <div className="mt-8 p-6 bg-white/68 rounded-2xl border border-white/70 text-left flex flex-col gap-6 animate-in slide-in-from-top-4 relative z-10 w-full max-w-2xl mx-auto shadow-xl backdrop-blur-md">
-                        <h3 className="font-bold text-xl">Reconfigure Test</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="mt-8 p-4 md:p-6 bg-white/68 rounded-2xl border border-white/70 text-left flex flex-col gap-6 animate-in slide-in-from-top-4 relative z-10 w-full max-w-2xl mx-auto shadow-xl backdrop-blur-md">
+                        <h3 className="font-bold text-lg md:text-xl">Reconfigure Test</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                             <div>
-                                <label className="block text-sm font-medium mb-2">Number of Questions ({numQuestions})</label>
+                                <label className="block text-xs md:text-sm font-medium mb-2">Number of Questions ({numQuestions})</label>
                                 <input
                                     type="range"
                                     min="3" max="20"
@@ -231,9 +231,9 @@ export function ResultsPage() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium mb-2">Difficulty</label>
+                                <label className="block text-xs md:text-sm font-medium mb-2">Difficulty</label>
                                 <select
-                                    className="w-full px-4 py-2 rounded-xl border border-white/65 bg-white/75 focus:ring-2 focus:ring-primary focus:outline-none"
+                                    className="w-full px-4 py-2 rounded-xl border border-white/65 bg-white/75 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
                                     value={difficulty}
                                     onChange={(e) => setDifficulty(e.target.value)}
                                 >
@@ -244,17 +244,17 @@ export function ResultsPage() {
                             </div>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-3">Question Types</label>
-                            <div className="flex flex-wrap gap-3">
+                            <label className="block text-xs md:text-sm font-medium mb-3">Question Types</label>
+                            <div className="flex flex-wrap gap-2 md:gap-3">
                                 {[{ id: "mcq", label: "Multiple Choice" }, { id: "true_false", label: "True/False" }, { id: "short", label: "Short Answer" }, { id: "long", label: "Long Answer" }].map(t => (
-                                    <label key={t.id} className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/60 bg-white/60 cursor-pointer hover:bg-white/78 transition-colors has-[:checked]:bg-white/85 has-[:checked]:border-primary has-[:checked]:text-primary select-none">
+                                    <label key={t.id} className="flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-white/60 bg-white/60 cursor-pointer hover:bg-white/78 transition-colors has-[:checked]:bg-white/85 has-[:checked]:border-primary has-[:checked]:text-primary select-none">
                                         <input
                                             type="checkbox"
                                             className="hidden"
                                             checked={questionTypes.includes(t.id)}
                                             onChange={() => handleTypeChange(t.id)}
                                         />
-                                        <span className="text-sm font-bold">{t.label}</span>
+                                        <span className="text-[11px] md:text-sm font-bold">{t.label}</span>
                                     </label>
                                 ))}
                             </div>
@@ -262,8 +262,8 @@ export function ResultsPage() {
                         {topicOutline.length > 0 && (
                             <div className="space-y-3">
                                 <div className="flex items-center justify-between gap-3">
-                                    <label className="block text-sm font-medium">Topics for Reattempt</label>
-                                    <span className="text-xs text-muted-foreground">{selectedReattemptTopics.length} selected</span>
+                                    <label className="block text-xs md:text-sm font-medium">Topics for Reattempt</label>
+                                    <span className="text-[10px] md:text-xs text-muted-foreground">{selectedReattemptTopics.length} selected</span>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     {topicOutline.map((topic: any) => {
@@ -273,22 +273,22 @@ export function ResultsPage() {
                                                 key={topic.id}
                                                 type="button"
                                                 onClick={() => toggleReattemptTopic(topic.id)}
-                                                className={`text-left p-4 rounded-xl border transition-colors ${isSelected ? "border-primary bg-white/85" : "border-white/60 bg-white/55 hover:bg-white/78"}`}
+                                                className={`text-left p-3 md:p-4 rounded-xl border transition-colors ${isSelected ? "border-primary bg-white/85" : "border-white/60 bg-white/55 hover:bg-white/78"}`}
                                             >
                                                 <div className="flex items-start justify-between gap-3">
                                                     <div>
-                                                        <div className="font-semibold">{topic.name}</div>
+                                                        <div className="font-semibold text-sm md:text-base">{topic.name}</div>
                                                         {topic.subtopics?.length > 0 && (
-                                                            <div className="mt-2 flex flex-wrap gap-2">
+                                                            <div className="mt-2 flex flex-wrap gap-1 md:gap-2">
                                                                 {topic.subtopics.map((subtopic: string, index: number) => (
-                                                                    <span key={`${topic.id}-${index}`} className="rounded-full border border-white/60 bg-white/70 px-2.5 py-1 text-[11px] font-medium text-slate-700">
+                                                                    <span key={`${topic.id}-${index}`} className="rounded-full border border-white/60 bg-white/70 px-2.5 py-1 text-[9px] md:text-[11px] font-medium text-slate-700">
                                                                         {subtopic}
                                                                     </span>
                                                                 ))}
                                                             </div>
                                                         )}
                                                     </div>
-                                                    <span className="shrink-0 rounded-full border border-white/65 bg-white/78 px-2.5 py-1 text-[11px] font-bold text-primary">
+                                                    <span className="shrink-0 rounded-full border border-white/65 bg-white/78 px-2 py-0.5 md:px-2.5 md:py-1 text-[9px] md:text-[11px] font-bold text-primary">
                                                         ~{topic.recommended_questions} Q
                                                     </span>
                                                 </div>
@@ -312,15 +312,15 @@ export function ResultsPage() {
             {/* Test Analytics Section */}
             {attempt && test && (
                 <div className="space-y-6 pt-4">
-                    <h2 className="text-2xl font-bold px-2 flex items-center gap-2">
-                        <BarChart3 className="w-6 h-6 text-primary" /> Test Analytics
+                    <h2 className="text-xl md:text-2xl font-bold px-2 flex items-center gap-2">
+                        <BarChart3 className="w-5 h-5 md:w-6 md:h-6 text-primary" /> Test Analytics
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="premium-panel p-6 rounded-3xl flex flex-col items-center">
-                            <h3 className="text-lg font-bold mb-2 flex items-center gap-2 w-full justify-start">
-                                <PieChart className="w-5 h-5 text-muted-foreground" /> Accuracy Breakdown
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                        <div className="premium-panel p-4 md:p-6 rounded-3xl flex flex-col items-center">
+                            <h3 className="text-base md:text-lg font-bold mb-2 flex items-center gap-2 w-full justify-start">
+                                <PieChart className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground" /> Accuracy Breakdown
                             </h3>
-                            <div className="h-[250px] w-full mt-2">
+                            <div className="h-[200px] md:h-[250px] w-full mt-2">
                                 <Plot
                                     data={[
                                         {
@@ -337,12 +337,12 @@ export function ResultsPage() {
                                     ]}
                                     layout={{
                                         autosize: true,
-                                        margin: { t: 10, b: 30, l: 10, r: 10 },
+                                        margin: { t: 0, b: 20, l: 0, r: 0 },
                                         paper_bgcolor: 'transparent',
                                         plot_bgcolor: 'transparent',
-                                        font: { color: 'var(--foreground)' },
+                                        font: { color: 'var(--foreground)', size: 10 },
                                         showlegend: true,
-                                        legend: { orientation: 'h', y: -0.15, xanchor: 'center', x: 0.5 }
+                                        legend: { orientation: 'h', y: -0.2, xanchor: 'center', x: 0.5 }
                                     }}
                                     useResizeHandler
                                     className="w-full h-full"
@@ -350,11 +350,11 @@ export function ResultsPage() {
                             </div>
                         </div>
 
-                        <div className="premium-panel p-6 rounded-3xl flex flex-col items-center">
-                            <h3 className="text-lg font-bold mb-2 flex items-center gap-2 w-full justify-start">
-                                <BarChart3 className="w-5 h-5 text-muted-foreground" /> Topic Performance
+                        <div className="premium-panel p-4 md:p-6 rounded-3xl flex flex-col items-center">
+                            <h3 className="text-base md:text-lg font-bold mb-2 flex items-center gap-2 w-full justify-start">
+                                <BarChart3 className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground" /> Topic Performance
                             </h3>
-                            <div className="h-[250px] w-full mt-2">
+                            <div className="h-[200px] md:h-[250px] w-full mt-2">
                                 {Object.keys(topicScores).length > 0 ? (
                                     <Plot
                                         data={[
@@ -368,25 +368,25 @@ export function ResultsPage() {
                                         ]}
                                         layout={{
                                             autosize: true,
-                                            margin: { t: 10, b: 60, l: 40, r: 20 },
+                                            margin: { t: 10, b: 50, l: 30, r: 10 },
                                             paper_bgcolor: 'transparent',
                                             plot_bgcolor: 'transparent',
-                                            font: { color: 'var(--foreground)' },
+                                            font: { color: 'var(--foreground)', size: 10 },
                                             xaxis: {
                                                 tickangle: -45,
-                                                tickfont: { size: 10 }
+                                                tickfont: { size: 9 }
                                             },
                                             yaxis: {
                                                 title: { text: 'Score (%)' },
                                                 range: [0, 100],
-                                                tickfont: { size: 10 }
+                                                tickfont: { size: 9 }
                                             }
                                         }}
                                         useResizeHandler
                                         className="w-full h-full"
                                     />
                                 ) : (
-                                    <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
+                                    <div className="h-full flex items-center justify-center text-muted-foreground text-xs">
                                         No topic data available
                                     </div>
                                 )}
@@ -397,22 +397,22 @@ export function ResultsPage() {
             )}
 
             {(isGeneratingNotes || notes) && (
-                <div className="p-8 rounded-3xl bg-[linear-gradient(180deg,rgba(255,255,255,0.72),rgba(247,245,239,0.68))] border border-white/75 space-y-4 backdrop-blur-md">
-                    <h2 className="text-2xl font-bold flex items-center gap-2 text-primary"><BookOpen className="w-6 h-6" /> Adaptive Study Notes</h2>
+                <div className="p-5 md:p-8 rounded-3xl bg-[linear-gradient(180deg,rgba(255,255,255,0.72),rgba(247,245,239,0.68))] border border-white/75 space-y-4 backdrop-blur-md">
+                    <h2 className="text-xl md:text-2xl font-bold flex items-center gap-2 text-primary"><BookOpen className="w-5 h-5 md:w-6 md:h-6" /> Adaptive Study Notes</h2>
                     {isGeneratingNotes ? (
-                        <div className="py-8 text-center animate-pulse text-muted-foreground flex flex-col items-center gap-2">
-                            <Loader2 className="w-6 h-6 animate-spin" /> Abstracting intelligence for your weak topics...
+                        <div className="py-6 md:py-8 text-center animate-pulse text-muted-foreground flex flex-col items-center gap-2 text-sm">
+                            <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin" /> Abstracting intelligence for your weak topics...
                         </div>
                     ) : (
-                        <div className="prose prose-sm dark:prose-invert max-w-none">
+                        <div className="prose prose-xs md:prose-sm dark:prose-invert max-w-none">
                             <Markdown>{notes}</Markdown>
                         </div>
                     )}
                 </div>
             )}
 
-            <div className="space-y-4 pt-8">
-                <h2 className="text-2xl font-bold px-2 flex items-center gap-2"><AlertCircle className="w-6 h-6 text-primary" /> Detailed Question Analysis</h2>
+            <div className="space-y-4 pt-8 pb-12">
+                <h2 className="text-xl md:text-2xl font-bold px-2 flex items-center gap-2"><AlertCircle className="w-5 h-5 md:w-6 md:h-6 text-primary" /> Detailed Question Analysis</h2>
                 {feedback.map((item: any, i: number) => {
                     const isCorrect = item.score > 0;
                     const quizQuestions = test?.quiz?.quiz || test?.quiz?.questions || test?.quiz || [];
@@ -430,43 +430,43 @@ export function ResultsPage() {
                     else if (isPartialMarks) bgClass = 'bg-yellow-500/5';
 
                     return (
-                        <div key={i} className={`p-8 rounded-2xl border border-white/70 ${bgClass} space-y-6 pt-6 relative overflow-hidden backdrop-blur-md`}>
+                        <div key={i} className={`p-5 md:p-8 rounded-2xl border border-white/70 ${bgClass} space-y-6 pt-6 relative overflow-hidden backdrop-blur-md`}>
                             {isFullMarks && <div className="absolute top-0 left-0 w-1 h-full bg-green-500" />}
                             {!isCorrect && <div className="absolute top-0 left-0 w-1 h-full bg-destructive" />}
                             {isPartialMarks && <div className="absolute top-0 left-0 w-1 h-full bg-yellow-500" />}
 
-                            <div className="flex justify-between items-start gap-4">
-                                <div>
-                                    <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+                                <div className="flex-1">
+                                    <div className="text-[10px] md:text-sm font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
                                         Question {displayQuestionNumber} <span className="w-1 h-1 rounded-full bg-muted-foreground opacity-50 block" /> {originalQ?.topic || "General"}
                                     </div>
-                                    <h4 className="font-bold text-xl flex items-start gap-3">
+                                    <h4 className="font-bold text-lg md:text-xl flex items-start gap-3 leading-snug">
                                         {originalQ?.question || originalQ?.text || "Unknown Question"}
                                     </h4>
                                 </div>
-                                <span className={`font-black px-4 py-2 rounded-full text-sm shrink-0 uppercase tracking-tighter shadow-sm border ${isFullMarks ? 'bg-green-500 text-white border-green-600' : isPartialMarks ? 'bg-yellow-500 text-white border-yellow-600' : 'bg-destructive text-white border-destructive'}`}>
+                                <span className={`font-black px-4 py-2 rounded-full text-[10px] md:text-sm shrink-0 uppercase tracking-tighter shadow-sm border self-start md:self-auto ${isFullMarks ? 'bg-green-500 text-white border-green-600' : isPartialMarks ? 'bg-yellow-500 text-white border-yellow-600' : 'bg-destructive text-white border-destructive'}`}>
                                     {item.score} / {maxMarks} Marks
                                 </span>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                                 <div className="p-4 rounded-xl bg-white/68 border border-white/70 relative">
-                                    <span className="absolute -top-3 left-4 bg-[rgba(247,245,239,0.92)] px-2 text-xs font-bold text-muted-foreground uppercase">Your Answer</span>
-                                    <p className="text-muted-foreground">{userGivenAnswer}</p>
+                                    <span className="absolute -top-3 left-4 bg-[rgba(247,245,239,0.92)] px-2 text-[10px] font-bold text-muted-foreground uppercase">Your Answer</span>
+                                    <p className="text-sm md:text-base text-muted-foreground">{userGivenAnswer}</p>
                                 </div>
 
                                 <div className="p-4 rounded-xl bg-white/68 border border-white/70 relative">
-                                    <span className="absolute -top-3 left-4 bg-[rgba(247,245,239,0.92)] px-2 text-xs font-bold text-muted-foreground uppercase">Correct Answer</span>
-                                    <p className="font-medium text-foreground">{getDisplayCorrectAnswer(originalQ) || "Detailed evaluation above"}</p>
+                                    <span className="absolute -top-3 left-4 bg-[rgba(247,245,239,0.92)] px-2 text-[10px] font-bold text-muted-foreground uppercase">Correct Answer</span>
+                                    <p className="text-sm md:text-base font-medium text-foreground">{getDisplayCorrectAnswer(originalQ) || "Detailed evaluation above"}</p>
                                 </div>
                             </div>
 
                             <div className={`p-4 rounded-xl border flex items-start gap-3 mt-4 ${isFullMarks ? 'bg-green-500/10 border-green-500/20 text-green-700' : isPartialMarks ? 'bg-yellow-500/10 border-yellow-500/20 text-yellow-700' : 'bg-destructive/10 border-destructive/20 text-destructive'}`}>
-                                <Quote className="w-5 h-5 shrink-0 mt-0.5 opacity-50" />
+                                <Quote className="w-4 h-4 md:w-5 md:h-5 shrink-0 mt-0.5 opacity-50" />
                                 <div className="flex-1">
-                                    <p className="font-medium leading-relaxed">{item.feedback}</p>
+                                    <p className="text-sm md:text-base font-medium leading-relaxed">{item.feedback}</p>
                                     {originalQ?.explanation && !isFullMarks && (
-                                        <p className="text-sm mt-3 pt-3 border-t border-current/10 opacity-80">
+                                        <p className="text-xs md:text-sm mt-3 pt-3 border-t border-current/10 opacity-80">
                                             <strong>Key Concept:</strong> {originalQ.explanation}
                                         </p>
                                     )}
@@ -476,6 +476,7 @@ export function ResultsPage() {
                     );
                 })}
             </div>
+
         </div>
     );
 }

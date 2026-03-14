@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Outlet, Link, useNavigate } from "react-router-dom";
-import { LogOut, LayoutDashboard, UploadCloud, ChevronDown } from "lucide-react";
+import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
+import { LogOut, LayoutDashboard, UploadCloud, ChevronDown, Menu, X } from "lucide-react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { auth } from "../firebase/config";
@@ -12,7 +12,7 @@ export function Layout() {
             <div className="app-shell-glow-secondary pointer-events-none absolute inset-x-0 top-[240px] h-[520px]" />
 
             <AppNavbar />
-            <main className="relative z-10 flex-1 container max-w-7xl mx-auto p-6 animate-in fade-in duration-500">
+            <main className="relative z-10 flex-1 container max-w-7xl mx-auto p-4 md:p-6 animate-in fade-in duration-500">
                 <Outlet />
             </main>
         </div>
@@ -25,8 +25,10 @@ type AppNavbarProps = {
 
 export function AppNavbar({ onLogin }: AppNavbarProps) {
     const navigate = useNavigate();
+    const location = useLocation();
     const [user, setUser] = useState<User | null>(auth.currentUser);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [profileImageFailed, setProfileImageFailed] = useState(false);
     const profileMenuRef = useRef<HTMLDivElement | null>(null);
 
@@ -50,52 +52,64 @@ export function AppNavbar({ onLogin }: AppNavbarProps) {
         return () => document.removeEventListener("mousedown", handleOutsideClick);
     }, []);
 
+    // Close mobile menu on route change
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+    }, [location.pathname]);
+
     const handleLogout = async () => {
         await signOut(auth);
         setShowProfileMenu(false);
+        setIsMobileMenuOpen(false);
         navigate("/");
     };
 
     return (
-        <header className="app-navbar border-b sticky top-0 z-50">
-            <div className="container max-w-7xl mx-auto flex items-center justify-between h-16 px-6">
+        <header className="app-navbar border-b sticky top-0 z-50 bg-white/80 backdrop-blur-md">
+            <div className="container max-w-7xl mx-auto flex items-center justify-between h-16 px-4 md:px-6">
                 <Link to="/" className="flex items-center gap-2 text-xl font-bold tracking-tighter text-slate-950 transition-transform duration-300 hover:scale-[1.02]">
                     <img src="/logo.png" alt="TESTIFY logo" className="w-8 h-8 object-contain" />
                     TESTIFY
                 </Link>
-                <nav className="flex items-center gap-6 text-sm font-medium text-slate-700">
-                    <Link to="/dashboard" className="flex items-center gap-2 hover:text-slate-950 transition-colors">
-                        <LayoutDashboard className="w-4 h-4" />
-                        Dashboard
-                    </Link>
-                    <Link to="/upload" className="flex items-center gap-2 hover:text-slate-950 transition-colors">
-                        <UploadCloud className="w-4 h-4" />
-                        Upload Content
-                    </Link>
+
+                <div className="flex items-center gap-4">
+                    {/* Desktop Navigation */}
+                    <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-700">
+                        <Link to="/dashboard" className="flex items-center gap-2 hover:text-slate-950 transition-colors">
+                            <LayoutDashboard className="w-4 h-4" />
+                            Dashboard
+                        </Link>
+                        <Link to="/upload" className="flex items-center gap-2 hover:text-slate-950 transition-colors">
+                            <UploadCloud className="w-4 h-4" />
+                            Upload Content
+                        </Link>
+                    </nav>
+
+                    {/* Profile Section (Desktop & Mobile) */}
                     {user ? (
                         <div className="relative" ref={profileMenuRef}>
                             <button
                                 onClick={() => setShowProfileMenu(prev => !prev)}
-                                className="flex items-center gap-2 rounded-full border border-slate-200 bg-white/85 pl-2 pr-3 py-1.5 shadow-[0_18px_38px_-28px_rgba(15,23,42,0.45)] backdrop-blur-md hover:bg-white transition-colors"
+                                className="flex items-center gap-2 rounded-full border border-slate-200 bg-white/85 p-1 md:pl-2 md:pr-3 md:py-1.5 shadow-[0_18px_38px_-28px_rgba(15,23,42,0.45)] backdrop-blur-md hover:bg-white transition-colors"
                             >
                                 {user.photoURL && !profileImageFailed ? (
                                     <img
                                         src={user.photoURL}
                                         alt={user.displayName || "Profile"}
-                                        className="w-9 h-9 rounded-full object-cover border border-slate-200"
+                                        className="w-8 h-8 md:w-9 md:h-9 rounded-full object-cover border border-slate-200"
                                         onError={() => setProfileImageFailed(true)}
                                         referrerPolicy="no-referrer"
                                     />
                                 ) : (
-                                    <div className="w-9 h-9 rounded-full border border-slate-200 bg-slate-950 text-white flex items-center justify-center text-sm font-bold">
+                                    <div className="w-8 h-8 md:w-9 md:h-9 rounded-full border border-slate-200 bg-slate-950 text-white flex items-center justify-center text-xs md:text-sm font-bold">
                                         {getUserInitial(user)}
                                     </div>
                                 )}
-                                <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform ${showProfileMenu ? "rotate-180" : ""}`} />
+                                <ChevronDown className={`hidden md:block w-4 h-4 text-slate-500 transition-transform ${showProfileMenu ? "rotate-180" : ""}`} />
                             </button>
 
                             {showProfileMenu && (
-                                <div className="absolute right-0 mt-3 w-52 rounded-2xl border border-slate-200 bg-white/95 shadow-xl backdrop-blur-xl p-2">
+                                <div className="absolute right-0 mt-3 w-52 rounded-2xl border border-slate-200 bg-white shadow-xl backdrop-blur-xl p-2 z-[60]">
                                     <div className="px-3 py-2 border-b border-slate-100">
                                         <p className="text-sm font-semibold truncate">{user.displayName || "Signed in"}</p>
                                         <p className="text-xs text-slate-500 truncate">{user.email}</p>
@@ -118,8 +132,33 @@ export function AppNavbar({ onLogin }: AppNavbarProps) {
                             Login
                         </button>
                     ) : null}
-                </nav>
+
+                    {/* Mobile Menu Toggle */}
+                    <button
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className="md:hidden p-2 rounded-xl hover:bg-slate-100 transition-colors"
+                        aria-label="Toggle Menu"
+                    >
+                        {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                    </button>
+                </div>
             </div>
+
+            {/* Mobile Navigation Drawer */}
+            {isMobileMenuOpen && (
+                <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b shadow-lg animate-in slide-in-from-top duration-300 z-40">
+                    <nav className="flex flex-col p-4 space-y-2">
+                        <Link to="/dashboard" className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors text-slate-700 font-medium">
+                            <LayoutDashboard className="w-5 h-5 text-slate-500" />
+                            Dashboard
+                        </Link>
+                        <Link to="/upload" className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors text-slate-700 font-medium">
+                            <UploadCloud className="w-5 h-5 text-slate-500" />
+                            Upload Content
+                        </Link>
+                    </nav>
+                </div>
+            )}
         </header>
     );
 }

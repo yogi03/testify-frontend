@@ -1,7 +1,7 @@
 # 🎓 TESTIFY - The Ultimate AI Learning Platform
 
 <div align="center">
-  <img src="./1.png" alt="TESTIFY Hero Banner" width="100%" />
+  <img src="public/logo.png" alt="TESTIFY Hero Banner" width="100%" />
 
   <br />
   <br />
@@ -32,16 +32,16 @@ It actively tracks your progress, identifies your weak points, and adapts to ens
 
 <table align="center">
   <tr>
-    <td><img src="./1.png" alt="Dashboard" /></td>
-    <td><img src="./2.png" alt="Topic Extraction" /></td>
+    <td><img src="public/1.png" alt="Dashboard" /></td>
+    <td><img src="public/2.png" alt="Topic Extraction" /></td>
   </tr>
   <tr>
-    <td><img src="./3.png" alt="Test Generation" /></td>
-    <td><img src="./4.png" alt="Taking the Test" /></td>
+    <td><img src="public/3.png" alt="Test Generation" /></td>
+    <td><img src="public/4.png" alt="Taking the Test" /></td>
   </tr>
   <tr>
-    <td><img src="./5.png" alt="Test Results & Analytics" /></td>
-    <td><img src="./6.png" alt="Mind Map Visualization" /></td>
+    <td><img src="public/5.png" alt="Test Results & Analytics" /></td>
+    <td><img src="public/6.png" alt="Mind Map Visualization" /></td>
   </tr>
 </table>
 

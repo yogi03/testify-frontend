@@ -1,7 +1,7 @@
 # 🎓 TESTIFY - The Ultimate AI Learning Platform
 
 <div align="center">
-  <img src="public/logo.png" alt="TESTIFY Hero Banner" width="100%" />
+  <img src="public/logo.png" alt="TESTIFY Hero Banner" width="200" />
 
   <br />
   <br />

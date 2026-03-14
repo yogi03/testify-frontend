@@ -215,41 +215,41 @@ export function MindMapPage() {
                     </button>
 
                     {showTestConfig && (
-                        <div className="absolute top-12 right-0 w-72 sm:w-80 p-4 bg-[rgba(247,245,239,0.9)] border border-white/70 shadow-xl rounded-2xl z-50 animate-in slide-in-from-top-2 backdrop-blur-md">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="font-bold">Test Configuration</h3>
-                                <button onClick={() => setShowTestConfig(false)} className="p-1 hover:bg-white/70 rounded-full"><X className="w-4 h-4" /></button>
+                        <div className="fixed inset-x-4 top-[4.5rem] sm:absolute sm:inset-auto sm:top-12 sm:right-0 w-auto sm:w-96 max-h-[75vh] overflow-y-auto p-5 sm:p-6 bg-[rgba(247,245,239,0.96)] border border-white/75 shadow-2xl rounded-2xl z-[100] animate-in slide-in-from-top-2 backdrop-blur-xl">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="font-bold text-lg">Test Configuration</h3>
+                                <button onClick={() => setShowTestConfig(false)} className="p-2 hover:bg-white/70 rounded-full transition-colors"><X className="w-5 h-5" /></button>
                             </div>
 
-                            <div className="space-y-4">
+                            <div className="space-y-6">
                                 <div>
-                                    <label className="block text-sm font-medium mb-1">Questions ({numQuestions})</label>
+                                    <label className="block text-sm font-bold mb-2">Number of Questions ({numQuestions})</label>
                                     <input type="range" min="3" max="20" value={numQuestions} onChange={(e) => setNumQuestions(parseInt(e.target.value))} className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-secondary accent-primary" />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium mb-1">Difficulty</label>
-                                    <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} className="w-full p-2 border border-white/65 rounded-lg bg-white/75">
+                                    <label className="block text-sm font-bold mb-2">Difficulty</label>
+                                    <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} className="w-full p-3 border border-white/65 rounded-xl bg-white/75 focus:ring-2 focus:ring-primary focus:outline-none text-sm">
                                         <option value="Easy">Easy</option><option value="Medium">Medium</option><option value="Hard">Hard</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium mb-1">Types</label>
-                                    <div className="flex flex-wrap gap-2">
-                                        {[{ id: "mcq", label: "MCQ" }, { id: "true_false", label: "T/F" }, { id: "short", label: "Short" }, { id: "long", label: "Long" }].map(t => (
-                                            <label key={t.id} className="flex items-center gap-1 text-xs px-2 py-1 rounded-full border border-white/60 bg-white/60 cursor-pointer has-[:checked]:bg-white/85 has-[:checked]:border-primary select-none">
+                                    <label className="block text-sm font-bold mb-3">Question Types</label>
+                                    <div className="flex flex-wrap gap-2 md:gap-3">
+                                        {[{ id: "mcq", label: "Multiple Choice" }, { id: "true_false", label: "True/False" }, { id: "short", label: "Short Answer" }, { id: "long", label: "Long Answer" }].map(t => (
+                                            <label key={t.id} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/60 bg-white/60 cursor-pointer hover:bg-white/78 transition-colors has-[:checked]:bg-white/85 has-[:checked]:border-primary has-[:checked]:text-primary select-none">
                                                 <input type="checkbox" className="hidden" checked={questionTypes.includes(t.id)} onChange={() => setQuestionTypes(prev => prev.includes(t.id) ? prev.filter(x => x !== t.id) : [...prev, t.id])} />
-                                                {t.label}
+                                                <span className="text-[11px] font-bold">{t.label}</span>
                                             </label>
                                         ))}
                                     </div>
                                 </div>
                                 {topicOutline.length > 0 && (
-                                    <div>
-                                        <div className="flex items-center justify-between mb-2">
-                                            <label className="block text-sm font-medium">Topics</label>
-                                            <span className="text-xs text-muted-foreground">{selectedTopics.length} selected</span>
+                                    <div className="space-y-3">
+                                        <div className="flex items-center justify-between">
+                                            <label className="block text-sm font-bold">Topics</label>
+                                            <span className="text-xs text-muted-foreground font-medium">{selectedTopics.length} selected</span>
                                         </div>
-                                        <div className="max-h-48 overflow-y-auto space-y-2 pr-1">
+                                        <div className="max-h-60 overflow-y-auto space-y-2.5 pr-1 custom-scrollbar">
                                             {topicOutline.map((topic: any) => {
                                                 const isSelected = selectedTopics.includes(topic.id);
                                                 return (
@@ -257,23 +257,23 @@ export function MindMapPage() {
                                                         key={topic.id}
                                                         type="button"
                                                         onClick={() => toggleTopic(topic.id)}
-                                                        className={`w-full text-left p-3 rounded-xl border transition-colors ${isSelected ? "border-primary bg-white/85" : "border-white/60 bg-white/55 hover:bg-white/78"}`}
+                                                        className={`w-full text-left p-3.5 rounded-xl border transition-all ${isSelected ? "border-primary bg-white/85 shadow-sm" : "border-white/60 bg-white/55 hover:bg-white/78"}`}
                                                     >
-                                                        <div className="flex items-start justify-between gap-2">
+                                                        <div className="flex items-start justify-between gap-3">
                                                             <div>
-                                                                <div className="font-medium text-sm">{topic.name}</div>
+                                                                <div className="font-bold text-[13px] text-slate-800 leading-tight">{topic.name}</div>
                                                                 {topic.subtopics?.length > 0 && (
-                                                                    <div className="mt-1 flex flex-wrap gap-1.5">
+                                                                    <div className="mt-2 flex flex-wrap gap-1.5">
                                                                         {topic.subtopics.slice(0, 4).map((subtopic: string, index: number) => (
-                                                                            <span key={`${topic.id}-${index}`} className="rounded-full border border-white/60 bg-white/70 px-2 py-0.5 text-[10px] font-medium text-slate-700">
+                                                                            <span key={`${topic.id}-${index}`} className="rounded-full border border-white/60 bg-white/70 px-2 py-0.5 text-[9px] font-bold text-slate-500">
                                                                                 {subtopic}
                                                                             </span>
                                                                         ))}
                                                                     </div>
                                                                 )}
                                                             </div>
-                                                            <span className="shrink-0 rounded-full border border-white/65 bg-white/78 px-2 py-0.5 text-[10px] font-bold text-primary">
-                                                                ~{topic.recommended_questions} Q
+                                                            <span className="shrink-0 rounded-full border border-primary/20 bg-primary/5 px-2 py-0.5 text-[10px] font-black text-primary">
+                                                                {topic.recommended_questions}Q
                                                             </span>
                                                         </div>
                                                     </button>
@@ -285,9 +285,9 @@ export function MindMapPage() {
                                 <button
                                     onClick={handleGenerateTest}
                                     disabled={isGeneratingTest || (topicOutline.length > 0 && selectedTopics.length === 0)}
-                                    className="w-full py-2 mt-4 bg-primary text-primary-foreground font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 hover:brightness-110 active:scale-[0.98] transition-all"
+                                    className="w-full py-4 mt-2 bg-primary text-primary-foreground font-black rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 hover:brightness-110 active:scale-[0.98] transition-all shadow-lg"
                                 >
-                                    {isGeneratingTest ? <Loader2 className="w-4 h-4 animate-spin" /> : "Generate & Start"}
+                                    {isGeneratingTest ? <><Loader2 className="w-5 h-5 animate-spin" /> Generating...</> : "Generate & Start Test"}
                                 </button>
                             </div>
                         </div>

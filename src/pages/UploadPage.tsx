@@ -329,7 +329,7 @@ export function UploadPage() {
                                                 <h3 className="font-bold text-base md:text-lg leading-tight">{topic.name}</h3>
                                             </div>
                                             <div className="shrink-0 rounded-lg bg-primary/5 border border-primary/10 px-2 py-1 text-[10px] md:text-xs font-black text-primary uppercase">
-                                                {topic.recommended_questions} Questions
+                                                ~{topic.recommended_questions} Questions
                                             </div>
                                         </div>
 

@@ -123,12 +123,19 @@ export function Dashboard() {
                                 ]}
                                 layout={{
                                     autosize: true,
-                                    margin: { t: 20, r: 20, l: 40, b: 40 },
+                                    margin: { t: 40, r: 20, l: 60, b: 60 },
                                     paper_bgcolor: 'transparent',
                                     plot_bgcolor: 'transparent',
                                     font: { color: 'var(--foreground)' },
-                                    xaxis: { gridcolor: 'var(--border)' },
-                                    yaxis: { gridcolor: 'var(--border)' }
+                                    xaxis: { 
+                                        title: { text: 'Test Number' },
+                                        gridcolor: 'var(--border)' 
+                                    },
+                                    yaxis: { 
+                                        title: { text: 'Percent of Marks Scored' },
+                                        gridcolor: 'var(--border)',
+                                        range: [0, 100]
+                                    }
                                 }}
                                 useResizeHandler
                                 className="w-full h-full"

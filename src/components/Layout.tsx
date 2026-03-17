@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
-import { LogOut, LayoutDashboard, UploadCloud, ChevronDown, Menu, X } from "lucide-react";
+import { LogOut, LayoutDashboard, UploadCloud, ChevronDown, Menu, X, Github } from "lucide-react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { auth } from "../firebase/config";
@@ -15,6 +15,7 @@ export function Layout() {
             <main className="relative z-10 flex-1 container max-w-7xl mx-auto p-4 md:p-6 animate-in fade-in duration-500">
                 <Outlet />
             </main>
+            <AppFooter />
         </div>
     );
 }
@@ -83,6 +84,15 @@ export function AppNavbar({ onLogin }: AppNavbarProps) {
                             <UploadCloud className="w-4 h-4" />
                             Upload Content
                         </Link>
+                        <a 
+                            href="https://github.com/yogi03/testify-frontend" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 hover:text-slate-950 transition-colors"
+                        >
+                            <Github className="w-4 h-4" />
+                            GitHub
+                        </a>
                     </nav>
 
                     {/* Profile Section (Desktop & Mobile) */}
@@ -156,6 +166,15 @@ export function AppNavbar({ onLogin }: AppNavbarProps) {
                             <UploadCloud className="w-5 h-5 text-slate-500" />
                             Upload Content
                         </Link>
+                        <a 
+                            href="https://github.com/yogi03/testify-frontend" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors text-slate-700 font-medium"
+                        >
+                            <Github className="w-5 h-5 text-slate-500" />
+                            GitHub
+                        </a>
                     </nav>
                 </div>
             )}
@@ -168,3 +187,34 @@ function getUserInitial(user: User | null) {
     const source = user.displayName || user.email || "User";
     return source.trim().charAt(0).toUpperCase() || "U";
 }
+
+export function AppFooter() {
+    return (
+        <footer className="relative z-10 mt-auto border-t border-slate-200/60 bg-white/80 backdrop-blur-md">
+            {/* Subtle premium gradient glow above the footer */}
+            {/* <div className="absolute -top-[160px] left-0 right-0 h-[160px] pointer-events-none overflow-hidden select-none">
+                <div className="absolute bottom-0 left-0 right-0 h-full opacity-40 blur-[80px]" 
+                     style={{ 
+                         background: "radial-gradient(circle at 30% 100%, #e0e7ff 0%, transparent 50%), radial-gradient(circle at 70% 100%, #f0fdf4 0%, transparent 50%)" 
+                     }} 
+                />
+            </div> */}
+            
+            <div className="container max-w-7xl mx-auto px-4 md:px-6 py-10">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                    <Link to="/" className="flex items-center gap-2.5 text-xl font-bold tracking-tighter text-slate-900 transition-all duration-300 hover:opacity-80">
+                        <img src="/logo.png" alt="TESTIFY logo" className="w-8 h-8 object-contain" />
+                        TESTIFY
+                    </Link>
+                    
+                    <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm font-medium text-slate-500 text-center sm:text-left">
+                        <Link to="/privacy-terms" className="hover:text-slate-950 transition-colors">Privacy & Terms</Link>
+                        <span className="hidden sm:inline w-1 h-1 rounded-full bg-slate-300" />
+                        <p className="text-slate-400 max-w-[280px] sm:max-w-none">© 2026 TESTIFY AI • Intelligent Learning Platform</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    );
+}
+

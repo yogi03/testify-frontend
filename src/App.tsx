@@ -8,6 +8,7 @@ import { UploadPage } from "./pages/UploadPage";
 import { TestPage } from "./pages/TestPage";
 import { ResultsPage } from "./pages/ResultsPage";
 import { MindMapPage } from "./pages/MindMapPage";
+import { PrivacyTermsPage } from "./pages/PrivacyTermsPage";
 import { auth } from "./firebase/config";
 import { onAuthStateChanged } from "firebase/auth";
 import type { User } from "firebase/auth";
@@ -36,6 +37,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/privacy-terms" element={<PrivacyTermsPage />} />
           <Route element={user ? <Layout /> : <Navigate to="/" replace />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/upload" element={<UploadPage />} />

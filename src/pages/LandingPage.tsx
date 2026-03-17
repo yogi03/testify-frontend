@@ -10,7 +10,7 @@ import {
     BarChart3,
     Brain,
 } from "lucide-react";
-import { AppNavbar } from "../components/Layout";
+import { AppNavbar, AppFooter } from "../components/Layout";
 import { auth, db } from "../firebase/config";
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from "firebase/auth";
 import type { User } from "firebase/auth";
@@ -257,6 +257,7 @@ export function LandingPage() {
                     </div>
                 </section>
             </main>
+            <AppFooter />
         </div>
     );
 }

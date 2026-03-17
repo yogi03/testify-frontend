@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, ShieldCheck, FileText, Mail } from "lucide-react";
 import { AppNavbar, AppFooter } from "../components/Layout";
+import { PageTransition } from "../components/PageTransition";
 import { auth } from "../firebase/config";
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
@@ -59,7 +60,7 @@ export function PrivacyTermsPage() {
     };
 
     return (
-        <div ref={pageRef} className="landing-page min-h-screen bg-[#f7f5ef] text-slate-950 relative overflow-hidden flex flex-col">
+        <PageTransition ref={pageRef} className="landing-page min-h-screen bg-[#f7f5ef] text-slate-950 relative overflow-hidden flex flex-col">
             {/* Background Glows matching Landing Page */}
             <div className="landing-hero-glow absolute inset-x-0 top-0 h-[500px] bg-[radial-gradient(circle_at_top,_rgba(142,197,252,0.15),_transparent_60%),radial-gradient(circle_at_20%_25%,_rgba(196,255,143,0.18),_transparent_40%)] pointer-events-none" />
             <div className="absolute top-[400px] right-0 w-[500px] h-[500px] bg-[radial-gradient(circle_at_center,_rgba(103,232,249,0.08),_transparent_70%)] pointer-events-none" />
@@ -144,6 +145,6 @@ export function PrivacyTermsPage() {
             </main>
 
             <AppFooter />
-        </div>
+        </PageTransition>
     );
 }

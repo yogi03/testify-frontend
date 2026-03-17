@@ -1,9 +1,33 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import Plot from "react-plotly.js";
+import { lazy, Suspense } from "react";
 import { auth } from "../firebase/config";
 import { apiUrl } from "../lib/api";
 import { FileText, Target, TrendingUp, CheckCircle2, ChevronDown, ChevronRight, FileX2, Network, Trash2 } from "lucide-react";
+import { PageTransition } from "../components/PageTransition";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+    visible: {
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+};
+
+const itemVariants: any = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+        opacity: 1, 
+        y: 0,
+        transition: {
+            duration: 0.5,
+            ease: [0.22, 1, 0.36, 1]
+        }
+    }
+};
+
+const Plot = lazy(() => import("react-plotly.js"));
 
 export function Dashboard() {
     const user = auth.currentUser;
@@ -14,7 +38,9 @@ export function Dashboard() {
             const res = await fetch(apiUrl(`/analytics/${user?.uid}`));
             return res.json();
         },
-        enabled: !!user?.uid
+        enabled: !!user?.uid,
+        staleTime: 1000 * 60 * 5, // 5 minutes
+        refetchOnWindowFocus: false, // Prevent reloading on tab switch
     });
 
     const queryClient = useQueryClient();
@@ -56,49 +82,58 @@ export function Dashboard() {
     };
 
     if (!user) return <div className="p-8 text-center text-muted-foreground">Please log in to view dashboard.</div>;
-    if (isLoading) return <div className="p-8 text-center animate-pulse">Loading analytics...</div>;
+    if (isLoading) return <DashboardSkeleton userDisplayName={user.displayName || "User"} />;
 
     return (
-        <div className="space-y-8 fade-in">
-            <div>
+        <PageTransition className="space-y-8">
+            <motion.div initial="hidden" animate="visible" variants={itemVariants}>
                 <h1 className="text-4xl font-bold tracking-tight mb-2">Welcome back, {user.displayName}</h1>
                 <p className="text-muted-foreground">Here is your learning progress across all assessments.</p>
-            </div>
+            </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ">
-                <StatCard icon={<FileText />} title="Uploaded Docs" value={analytics?.uploaded_documents || 0} />
-                <StatCard icon={<CheckCircle2 />} title="Tests Taken" value={analytics?.total_tests || 0} />
-                <StatCard icon={<TrendingUp />} title="Average Score" value={`${analytics?.average_score || 0}%`} />
-                <StatCard icon={<Target />} title="Well Prepared" value={analytics?.prepared_topics || 0} />
-            </div>
+            <motion.div 
+                className="grid grid-cols-2 md:grid-cols-4 gap-4 "
+                initial="hidden"
+                animate="visible"
+                variants={containerVariants}
+            >
+                <div className="contents">
+                    <motion.div variants={itemVariants}><StatCard icon={<FileText />} title="Uploaded Docs" value={analytics?.uploaded_documents || 0} /></motion.div>
+                    <motion.div variants={itemVariants}><StatCard icon={<CheckCircle2 />} title="Tests Taken" value={analytics?.total_tests || 0} /></motion.div>
+                    <motion.div variants={itemVariants}><StatCard icon={<TrendingUp />} title="Average Score" value={`${analytics?.average_score || 0}%`} /></motion.div>
+                    <motion.div variants={itemVariants}><StatCard icon={<Target />} title="Well Prepared" value={analytics?.prepared_topics || 0} /></motion.div>
+                </div>
+            </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="premium-panel p-6 rounded-[1.75rem]">
                     <h3 className="text-xl font-bold mb-4">Score Progression</h3>
                     <div className="w-full h-[300px] overflow-hidden rounded-lg">
-                        <Plot
-                            data={[
-                                {
-                                    x: Array.from({ length: analytics?.recent_scores?.length || 1 }, (_, i) => i + 1),
-                                    y: analytics?.recent_scores?.length > 0 ? analytics.recent_scores : [0],
-                                    type: 'scatter',
-                                    mode: 'lines+markers',
-                                    marker: { color: 'var(--primary)', size: 8 },
-                                    line: { shape: 'spline', smoothing: 1.3 }
-                                }
-                            ]}
-                            layout={{
-                                autosize: true,
-                                margin: { t: 20, r: 20, l: 40, b: 40 },
-                                paper_bgcolor: 'transparent',
-                                plot_bgcolor: 'transparent',
-                                font: { color: 'var(--foreground)' },
-                                xaxis: { gridcolor: 'var(--border)' },
-                                yaxis: { gridcolor: 'var(--border)' }
-                            }}
-                            useResizeHandler
-                            className="w-full h-full"
-                        />
+                        <Suspense fallback={<div className="w-full h-full flex items-center justify-center bg-slate-50 rounded-lg animate-pulse text-muted-foreground text-sm">Loading chart...</div>}>
+                            <Plot
+                                data={[
+                                    {
+                                        x: Array.from({ length: analytics?.recent_scores?.length || 1 }, (_, i) => i + 1),
+                                        y: analytics?.recent_scores?.length > 0 ? analytics.recent_scores : [0],
+                                        type: 'scatter',
+                                        mode: 'lines+markers',
+                                        marker: { color: 'var(--primary)', size: 8 },
+                                        line: { shape: 'spline', smoothing: 1.3 }
+                                    }
+                                ]}
+                                layout={{
+                                    autosize: true,
+                                    margin: { t: 20, r: 20, l: 40, b: 40 },
+                                    paper_bgcolor: 'transparent',
+                                    plot_bgcolor: 'transparent',
+                                    font: { color: 'var(--foreground)' },
+                                    xaxis: { gridcolor: 'var(--border)' },
+                                    yaxis: { gridcolor: 'var(--border)' }
+                                }}
+                                useResizeHandler
+                                className="w-full h-full"
+                            />
+                        </Suspense>
                     </div>
                 </div>
 
@@ -206,7 +241,7 @@ export function Dashboard() {
                     )}
                 </div>
             </div>
-        </div>
+        </PageTransition>
     );
 }
 
@@ -231,5 +266,27 @@ function MetricBox({ label, value, helper }: { label: string, value: string, hel
             <div className="text-lg font-bold">{value}</div>
             <div className="text-xs text-muted-foreground">{helper}</div>
         </div>
+    );
+}
+
+function DashboardSkeleton({ userDisplayName }: { userDisplayName: string }) {
+    return (
+        <PageTransition className="space-y-8">
+            <div className="animate-pulse">
+                <h1 className="text-4xl font-bold tracking-tight mb-2">Welcome back, {userDisplayName}</h1>
+                <div className="h-4 w-64 bg-slate-200 rounded-lg"></div>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="premium-panel p-6 rounded-[1.75rem] h-32 animate-pulse bg-white/20"></div>
+                ))}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="premium-panel p-6 rounded-[1.75rem] h-[380px] animate-pulse bg-white/20"></div>
+                <div className="premium-panel p-6 rounded-[1.75rem] h-[380px] animate-pulse bg-white/20"></div>
+            </div>
+        </PageTransition>
     );
 }

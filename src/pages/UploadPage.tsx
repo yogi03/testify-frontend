@@ -1,8 +1,30 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { UploadCloud, Link as LinkIcon, FileText, Loader2, CheckCircle2, Target } from "lucide-react";
 import { auth } from "../firebase/config";
 import { apiUrl } from "../lib/api";
 import { useNavigate } from "react-router-dom";
+import { PageTransition } from "../components/PageTransition";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+    visible: {
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+};
+
+const itemVariants: any = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+        opacity: 1, 
+        y: 0,
+        transition: {
+            duration: 0.5,
+            ease: [0.22, 1, 0.36, 1]
+        }
+    }
+};
 
 type TopicOutlineItem = {
     id: string;
@@ -182,13 +204,18 @@ export function UploadPage() {
     };
 
     return (
-        <div className="max-w-5xl mx-auto space-y-8">
-            <div className="text-center">
+        <PageTransition className="max-w-5xl mx-auto space-y-8">
+            <motion.div initial="hidden" animate="visible" variants={itemVariants} className="text-center">
                 <h1 className="text-4xl font-bold mb-4">Provide Study Content</h1>
                 <p className="text-muted-foreground text-lg">Upload a PDF or share a URL, inspect the extracted topics and subtopics, then choose exactly what you want to practice.</p>
-            </div>
+            </motion.div>
 
-            <div className="premium-panel rounded-[2rem] overflow-hidden">
+            <motion.div 
+                initial="hidden"
+                animate="visible"
+                variants={itemVariants}
+                className="premium-panel rounded-[2rem] overflow-hidden"
+            >
                 <div className="flex border-b">
                     <button
                         className={`flex-1 py-4 text-center font-medium transition-colors ${activeTab === 'pdf' ? 'bg-white/80 text-primary border-b-2 border-primary' : 'hover:bg-white/60 text-muted-foreground'}`}
@@ -295,7 +322,7 @@ export function UploadPage() {
                         </button>
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
             {uploadedDoc && (
                 <div className="premium-panel rounded-[2rem] p-4 md:p-8 space-y-6">
@@ -385,6 +412,6 @@ export function UploadPage() {
                     </div>
                 </div>
             )}
-        </div>
+        </PageTransition>
     );
 }

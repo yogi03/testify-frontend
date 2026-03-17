@@ -1,9 +1,31 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase/config";
 import { doc, getDoc } from "firebase/firestore";
 import { Loader2, ArrowRight } from "lucide-react";
 import { apiUrl } from "../lib/api";
+import { PageTransition } from "../components/PageTransition";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+    visible: {
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+};
+
+const itemVariants: any = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+        opacity: 1, 
+        y: 0,
+        transition: {
+            duration: 0.5,
+            ease: [0.22, 1, 0.36, 1]
+        }
+    }
+};
 
 export function TestPage() {
     const { id } = useParams();
@@ -54,8 +76,8 @@ export function TestPage() {
     const selectedTopics = test?.selected_topics || [];
 
     return (
-        <div className="max-w-3xl mx-auto space-y-8 pb-24 fade-in">
-            <div className="mb-12">
+        <PageTransition className="max-w-3xl mx-auto space-y-8 pb-24">
+            <motion.div initial="hidden" animate="visible" variants={itemVariants} className="mb-12">
                 <h1 className="text-3xl font-bold mb-2">Adaptive Assessment</h1>
                 <p className="text-muted-foreground flex items-center justify-between">
                     <span>{questions.length} Questions</span>
@@ -70,9 +92,9 @@ export function TestPage() {
                         ))}
                     </div>
                 )}
-            </div>
+            </motion.div>
 
-            <div className="space-y-8">
+            <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8">
                 {questions.map((q: any, i: number) => (
                     <div key={q.id ?? i} className="premium-panel p-8 rounded-3xl transition-all hover:shadow-[0_28px_60px_-42px_rgba(15,23,42,0.34)]">
                         <div className="flex justify-between items-start mb-6">
@@ -109,7 +131,7 @@ export function TestPage() {
                         )}
                     </div>
                 ))}
-            </div>
+            </motion.div>
 
             <div className="fixed bottom-0 left-0 w-full p-4 bg-[linear-gradient(180deg,rgba(247,245,239,0.88),rgba(247,245,239,0.82))] backdrop-blur-xl border-t border-slate-200/80 z-10">
                 <div className="max-w-3xl mx-auto flex justify-between items-center">
@@ -123,6 +145,7 @@ export function TestPage() {
                     </button>
                 </div>
             </div>
-        </div>
+
+        </PageTransition>
     );
 }

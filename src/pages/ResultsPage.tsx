@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { db, auth } from "../firebase/config";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -6,6 +6,20 @@ import { Award, AlertCircle, RefreshCw, Loader2, BookOpen, Quote, Network, BarCh
 import Markdown from 'react-markdown';
 import Plot from "react-plotly.js";
 import { apiUrl } from "../lib/api";
+import { PageTransition } from "../components/PageTransition";
+import { motion } from "framer-motion";
+
+const itemVariants: any = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+        opacity: 1, 
+        y: 0,
+        transition: {
+            duration: 0.5,
+            ease: [0.22, 1, 0.36, 1]
+        }
+    }
+};
 
 export function ResultsPage() {
     const { attemptId } = useParams();
@@ -189,8 +203,8 @@ export function ResultsPage() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto space-y-8 fade-in">
-            <div className="premium-panel p-6 md:p-12 rounded-3xl text-center relative overflow-hidden">
+        <PageTransition className="max-w-4xl mx-auto space-y-8">
+            <motion.div initial="hidden" animate="visible" variants={itemVariants} className="premium-panel p-6 md:p-12 rounded-3xl text-center relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-chart-1 via-chart-2 to-chart-4" />
                 <Award className="w-12 h-12 md:w-20 md:h-20 text-yellow-500 mx-auto mb-4 md:mb-6 drop-shadow-lg" />
                 <h1 className="text-3xl md:text-5xl font-black mb-4">You scored {totalScore}</h1>
@@ -307,7 +321,7 @@ export function ResultsPage() {
                         </button>
                     </div>
                 )}
-            </div>
+            </motion.div>
 
             {/* Test Analytics Section */}
             {attempt && test && (
@@ -477,7 +491,8 @@ export function ResultsPage() {
                 })}
             </div>
 
-        </div>
+
+        </PageTransition>
     );
 }
 

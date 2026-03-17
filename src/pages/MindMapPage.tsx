@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import mermaid from "mermaid";
@@ -7,6 +7,20 @@ import { doc, getDoc, collection, query, where, getDocs } from "firebase/firesto
 import { Loader2, ArrowLeft, Maximize2, ZoomIn, ZoomOut, MousePointerClick, FileEdit, X } from "lucide-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { apiUrl } from "../lib/api";
+import { PageTransition } from "../components/PageTransition";
+import { motion } from "framer-motion";
+
+const itemVariants: any = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+        opacity: 1, 
+        y: 0,
+        transition: {
+            duration: 0.5,
+            ease: [0.22, 1, 0.36, 1]
+        }
+    }
+};
 
 export function MindMapPage() {
     const { docId } = useParams();
@@ -199,7 +213,8 @@ export function MindMapPage() {
     if (isLoading) return <div className="h-[80vh] flex flex-col items-center justify-center animate-pulse"><Loader2 className="w-12 h-12 text-primary animate-spin mb-4" /><p className="text-xl">Loading your Mind Map...</p></div>;
 
     return (
-        <div className="h-[80vh] premium-panel rounded-3xl overflow-hidden flex flex-col fade-in">
+        <PageTransition className="h-[80vh] premium-panel rounded-3xl overflow-hidden flex flex-col">
+            <motion.div initial="hidden" animate="visible" variants={itemVariants} className="flex flex-col h-full">
             <div className="p-4 border-b border-white/65 bg-[linear-gradient(180deg,rgba(247,245,239,0.82),rgba(247,245,239,0.72))] flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                     <Link to="/dashboard" className="p-2 hover:bg-white/70 rounded-full transition-colors"><ArrowLeft className="w-5 h-5" /></Link>
@@ -332,7 +347,8 @@ export function MindMapPage() {
                     </div>
                 )}
             </TransformWrapper>
-        </div>
+            </motion.div>
+        </PageTransition>
     );
 }
 

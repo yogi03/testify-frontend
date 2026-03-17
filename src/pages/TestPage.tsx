@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase/config";
 import { doc, getDoc } from "firebase/firestore";
@@ -96,7 +96,7 @@ export function TestPage() {
 
             <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8">
                 {questions.map((q: any, i: number) => (
-                    <div key={q.id ?? i} className="premium-panel p-8 rounded-3xl transition-all hover:shadow-[0_28px_60px_-42px_rgba(15,23,42,0.34)]">
+                    <motion.div variants={itemVariants} key={q.id ?? i} className="premium-panel p-8 rounded-3xl transition-all hover:shadow-[0_28px_60px_-42px_rgba(15,23,42,0.34)]">
                         <div className="flex justify-between items-start mb-6">
                             <h3 className="text-xl font-bold">
                                 <span className="text-muted-foreground mr-2">{i + 1}.</span>
@@ -129,7 +129,7 @@ export function TestPage() {
                                 onChange={(e) => setAnswers(prev => ({ ...prev, [q.id ?? i]: e.target.value }))}
                             />
                         )}
-                    </div>
+                    </motion.div>
                 ))}
             </motion.div>
 

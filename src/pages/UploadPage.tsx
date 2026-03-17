@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { UploadCloud, Link as LinkIcon, FileText, Loader2, CheckCircle2, Target } from "lucide-react";
 import { auth } from "../firebase/config";
 import { apiUrl } from "../lib/api";
@@ -338,12 +338,18 @@ export function UploadPage() {
                     </div>
 
                     {uploadedDoc.topic_outline.length > 0 ? (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <motion.div 
+                            variants={containerVariants}
+                            initial="hidden"
+                            animate="visible"
+                            className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+                        >
                             {uploadedDoc.topic_outline.map(topic => {
                                 const isSelected = selectedTopics.includes(topic.id);
                                 return (
-                                    <button
+                                    <motion.button
                                         key={topic.id}
+                                        variants={itemVariants}
                                         type="button"
                                         onClick={() => toggleTopic(topic.id)}
                                         className={`text-left p-4 md:p-5 rounded-2xl border transition-all flex flex-col gap-3 ${isSelected ? "border-primary bg-white/80 shadow-sm" : "border-slate-200/80 bg-white/45 hover:border-primary/40 hover:bg-white/70"}`}
@@ -377,10 +383,10 @@ export function UploadPage() {
                                                 </div>
                                             )}
                                         </div>
-                                    </button>
+                                    </motion.button>
                                 );
                             })}
-                        </div>
+                        </motion.div>
                     ) : (
                              <div className="rounded-2xl border border-dashed border-slate-300/70 bg-white/45 p-6 text-sm text-muted-foreground">
                             No structured topic outline was extracted for this content. You can still generate a general test, but topic-based progress tracking will be limited.

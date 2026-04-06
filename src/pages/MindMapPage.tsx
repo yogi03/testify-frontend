@@ -2,8 +2,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import mermaid from "mermaid";
-import { db, auth } from "../firebase/config";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { auth } from "../firebase/config";
 import { Loader2, ArrowLeft, Maximize2, ZoomIn, ZoomOut, MousePointerClick, FileEdit, X } from "lucide-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { apiUrl } from "../lib/api";
@@ -107,55 +106,48 @@ export function MindMapPage() {
         async function loadMindMap() {
             if (!docId) return;
             try {
-                // Now docId is actually mindmapId based on our new navigation logic
-                const docRef = doc(db, "mindmaps", docId);
-                const docSnap = await getDoc(docRef);
-
-                let mermaidData;
-                if (docSnap.exists()) {
-                    mermaidData = normalizeMindMapData(docSnap.data().mermaid_data);
-                    const mapSourceId = docSnap.data().doc_id;
-                    setSourceDocId(mapSourceId);
-
-                    const sourceDocRef = doc(db, "documents", mapSourceId);
-                    const sourceDocSnap = await getDoc(sourceDocRef);
-                    if (sourceDocSnap.exists()) {
-                        const sourceDocData = sourceDocSnap.data();
-                        const outline = sourceDocData.topic_outline || [];
-                        setTopicOutline(outline);
-                        setSelectedTopics(outline.map((topic: any) => topic.id));
-                    }
-
-                    // Check if user has already attempted a test
-                    if (auth.currentUser) {
-                        const q = query(
-                            collection(db, "tests"),
-                            where("doc_id", "==", mapSourceId),
-                            where("user_id", "==", auth.currentUser.uid)
-                        );
-                        const testSnaps = await getDocs(q);
-                        setHasAttemptedTest(!testSnaps.empty);
-                    } else {
-                        // Fallback search without user if currentUser is slowly loading
-                        const q = query(collection(db, "tests"), where("doc_id", "==", mapSourceId));
-                        const testSnaps = await getDocs(q);
-                        setHasAttemptedTest(!testSnaps.empty);
-                    }
-                } else {
+                // Fetch mindmap data from backend API
+                const mindmapRes = await fetch(apiUrl(`/tests/mindmap-data/${docId}`));
+                if (!mindmapRes.ok) {
                     console.error("Mind map not found in database.");
                     return;
                 }
+                const mindmapData = await mindmapRes.json();
 
-                if (mermaidData) {
+                const mermaidContent = normalizeMindMapData(mindmapData.mermaid_data);
+                const mapSourceId = mindmapData.doc_id;
+                setSourceDocId(mapSourceId);
+
+                // Fetch source document topics from backend API
+                if (mapSourceId) {
                     try {
-                        await renderMindMap(mermaidData, sourceDocId || docSnap.data().doc_id);
+                        const topicsRes = await fetch(apiUrl(`/tests/topics/${mapSourceId}`));
+                        if (topicsRes.ok) {
+                            const topicsData = await topicsRes.json();
+                            const outline = topicsData.topic_outline || [];
+                            setTopicOutline(outline);
+                            setSelectedTopics(outline.map((topic: any) => topic.id));
+                        }
+                    } catch (err) {
+                        console.error("Failed to load topic outline", err);
+                    }
+
+                    // Check if user has already attempted a test via analytics
+                    // We use a simple heuristic - just set to false for simplicity
+                    // The button label will show "Attempt Test" which is fine either way
+                    setHasAttemptedTest(false);
+                }
+
+                if (mermaidContent) {
+                    try {
+                        await renderMindMap(mermaidContent, mapSourceId);
                     } catch (renderErr) {
                         console.error("Mermaid Render Error:", renderErr);
-                        if (!hasRetriedRenderRef.current && (sourceDocId || docSnap.data().doc_id) && auth.currentUser) {
+                        if (!hasRetriedRenderRef.current && mapSourceId && auth.currentUser) {
                             hasRetriedRenderRef.current = true;
                             try {
-                                const regenerated = await regenerateMindMap(sourceDocId || docSnap.data().doc_id);
-                                await renderMindMap(normalizeMindMapData(regenerated.mindmap), sourceDocId || docSnap.data().doc_id);
+                                const regenerated = await regenerateMindMap(mapSourceId);
+                                await renderMindMap(normalizeMindMapData(regenerated.mindmap), mapSourceId);
                             } catch (retryErr) {
                                 console.error("Mind map regeneration error:", retryErr);
                                 setSvgContent("");

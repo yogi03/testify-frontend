@@ -1,7 +1,6 @@
 ﻿import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { db, auth } from "../firebase/config";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { auth } from "../firebase/config";
 import { Award, AlertCircle, RefreshCw, Loader2, BookOpen, Quote, Network, BarChart3, PieChart } from "lucide-react";
 import Markdown from 'react-markdown';
 import Plot from "react-plotly.js";
@@ -44,71 +43,79 @@ export function ResultsPage() {
     useEffect(() => {
         async function loadAttemptAndNotes() {
             if (!attemptId) return;
-            const docRef = doc(db, "attempts", attemptId);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                const attemptData = docSnap.data();
+            try {
+                // Fetch attempt data from backend API
+                const attemptRes = await fetch(apiUrl(`/evaluation/${attemptId}`));
+                if (!attemptRes.ok) throw new Error("Failed to load attempt");
+                const attemptData = await attemptRes.json();
                 setAttempt(attemptData);
 
                 // Fetch the original test to correlate questions to topics
-                const testRef = doc(db, "tests", attemptData.test_id);
-                const testSnap = await getDoc(testRef);
-                if (testSnap.exists()) {
-                    const testData = testSnap.data();
-                    setTest(testData);
-                    setSelectedReattemptTopics((testData.selected_topics || []).map((topic: any) => topic.id || topic.name).filter(Boolean));
+                const testRes = await fetch(apiUrl(`/tests/${attemptData.test_id}`));
+                if (!testRes.ok) throw new Error("Failed to load test");
+                const testData = await testRes.json();
+                setTest(testData);
+                setSelectedReattemptTopics((testData.selected_topics || []).map((topic: any) => topic.id || topic.name).filter(Boolean));
 
-                    if (testData.doc_id) {
-                        const sourceDocRef = doc(db, "documents", testData.doc_id);
-                        const sourceDocSnap = await getDoc(sourceDocRef);
-                        if (sourceDocSnap.exists()) {
-                            const sourceDocData = sourceDocSnap.data();
-                            setTopicOutline(sourceDocData.topic_outline || []);
+                if (testData.doc_id) {
+                    try {
+                        const topicsRes = await fetch(apiUrl(`/tests/topics/${testData.doc_id}`));
+                        if (topicsRes.ok) {
+                            const topicsData = await topicsRes.json();
+                            setTopicOutline(topicsData.topic_outline || []);
                         }
+                    } catch (err) {
+                        console.error("Failed to load topic outline", err);
                     }
+                }
 
-                    const quizQuestions = testData.quiz?.quiz || testData.quiz?.questions || testData.quiz || [];
-                    const incorrectTopicsList = getIncorrectTopics(attemptData.detailed_feedback || [], quizQuestions);
-                    const savedNotesTopics = Array.isArray(attemptData.notes_topics) ? [...attemptData.notes_topics].sort() : [];
-                    const expectedNotesTopics = [...incorrectTopicsList].sort();
-                    const hasMatchingScopedNotes =
-                        typeof attemptData.notes === "string" &&
-                        attemptData.notes.length > 0 &&
-                        attemptData.notes_scope === "incorrect_only" &&
-                        JSON.stringify(savedNotesTopics) === JSON.stringify(expectedNotesTopics);
+                const quizQuestions = testData.quiz?.quiz || testData.quiz?.questions || testData.quiz || [];
+                const incorrectTopicsList = getIncorrectTopics(attemptData.detailed_feedback || [], quizQuestions);
+                const savedNotesTopics = Array.isArray(attemptData.notes_topics) ? [...attemptData.notes_topics].sort() : [];
+                const expectedNotesTopics = [...incorrectTopicsList].sort();
+                const hasMatchingScopedNotes =
+                    typeof attemptData.notes === "string" &&
+                    attemptData.notes.length > 0 &&
+                    attemptData.notes_scope === "incorrect_only" &&
+                    JSON.stringify(savedNotesTopics) === JSON.stringify(expectedNotesTopics);
 
-                    if (hasMatchingScopedNotes) {
-                        setNotes(attemptData.notes);
-                    } else if (incorrectTopicsList.length > 0) {
-                        setIsGeneratingNotes(true);
-                        try {
-                            const res = await fetch(apiUrl("/tests/notes"), {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    user_id: attemptData.user_id,
-                                    doc_id: testData.doc_id,
-                                    topics: incorrectTopicsList
-                                })
-                            });
-                            const data = await res.json();
-                            setNotes(data.notes);
+                if (hasMatchingScopedNotes) {
+                    setNotes(attemptData.notes);
+                } else if (incorrectTopicsList.length > 0) {
+                    setIsGeneratingNotes(true);
+                    try {
+                        const res = await fetch(apiUrl("/tests/notes"), {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                user_id: attemptData.user_id,
+                                doc_id: testData.doc_id,
+                                topics: incorrectTopicsList
+                            })
+                        });
+                        const data = await res.json();
+                        setNotes(data.notes);
 
-                            // Save the scoped notes so historical views can safely reuse them.
-                            await updateDoc(docRef, {
+                        // Save the scoped notes via backend API
+                        await fetch(apiUrl(`/evaluation/${attemptId}/notes`), {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
                                 notes: data.notes,
                                 notes_topics: incorrectTopicsList,
                                 notes_scope: "incorrect_only"
-                            });
-                        } catch (err) {
-                            console.error("Failed to generating notes", err);
-                        } finally {
-                            setIsGeneratingNotes(false);
-                        }
-                    } else {
-                        setNotes("");
+                            })
+                        });
+                    } catch (err) {
+                        console.error("Failed to generate notes", err);
+                    } finally {
+                        setIsGeneratingNotes(false);
                     }
+                } else {
+                    setNotes("");
                 }
+            } catch (err) {
+                console.error("Failed to load results", err);
             }
         }
         loadAttemptAndNotes();

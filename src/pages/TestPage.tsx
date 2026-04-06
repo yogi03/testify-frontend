@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { auth, db } from "../firebase/config";
-import { doc, getDoc } from "firebase/firestore";
+import { auth } from "../firebase/config";
 import { Loader2, ArrowRight } from "lucide-react";
 import { apiUrl } from "../lib/api";
 import { PageTransition } from "../components/PageTransition";
@@ -33,16 +32,22 @@ export function TestPage() {
     const [test, setTest] = useState<any>(null);
     const [answers, setAnswers] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         async function loadTest() {
             if (!id) return;
-            const docRef = doc(db, "tests", id);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                setTest(docSnap.data());
-            } else {
-                alert("Test not found");
+            try {
+                const res = await fetch(apiUrl(`/tests/${id}`));
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => null);
+                    throw new Error(errData?.detail || `Failed to load test (${res.status})`);
+                }
+                const data = await res.json();
+                setTest(data);
+            } catch (err: any) {
+                console.error("Error loading test:", err);
+                setError(err.message || "Failed to load test. Please try again.");
             }
         }
         loadTest();
@@ -69,6 +74,8 @@ export function TestPage() {
             setIsSubmitting(false);
         }
     };
+
+    if (error) return <div className="p-12 text-center flex flex-col items-center"><p className="text-destructive font-bold text-lg mb-2">⚠ {error}</p><button onClick={() => navigate("/upload")} className="px-6 py-2 rounded-xl bg-primary text-primary-foreground font-bold hover:brightness-110 transition-all mt-4">Go Back to Upload</button></div>;
 
     if (!test) return <div className="p-12 text-center animate-pulse flex flex-col items-center"><Loader2 className="w-8 h-8 animate-spin text-primary mb-4" /> Loading your personalized test...</div>;
 
